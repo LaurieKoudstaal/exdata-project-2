@@ -1,6 +1,6 @@
-library(plyr)
-library(dplyr)
-library(ggplot2)
+require(plyr)
+require(dplyr)
+require(ggplot2)
 require(grid)
 
 ## Because these data take a while to load, we check if we haven't already loaded them
@@ -20,19 +20,21 @@ emissions_by_type <- ddply(baltimore_emissions,
 	summarize, 
 	total=sum(Emissions))
 
+png("plot3.png", width = 480, height = 3*480)
+
+# Here I opted for a trendline. In the situation where you have to demonstrate there
+# is or isn't an increase, I think trendlines and confidence intervals demonstrate
+# how much certainty you can actually have.
 graph <- ggplot(emissions_by_type, aes(year, total)) + 
 	# I layout the graph vertically, so it's easier to compare the trend in each 
 	# type
 	facet_wrap( ~ type, nrow = 4, ncol = 1) +
-	geom_point() + 
-	geom_smooth(method = "lm", color = "Blue") + 
-	# Append the subtitle to the x label
-	xlab("Year\nSource: EPA (http://www.epa.gov/ttn/chief/eiinformation.html)") + 
-	ylab("PM2.5 Emissions") +
-	ggtitle("Total Annual PM2.5 Emissions in Baltimore by Type") +
-	# It's hard to make out the trend if the panels are too wide, so shrint the
-	# whole plot horizonally
-	theme(plot.margin = unit(c(0, 1.75, 0, 1.75), "inches"))
+	geom_point(color = "Blue" )+ 
+	geom_smooth(method = "lm", color = "Black") + 
+	xlab("Year") + 
+	ylab("PM2.5 Emissions (tons)") +
+	ggtitle("Total Annual PM2.5 Emissions\nin Baltimore City by Type") 
 
-ggsave("plot3.png", width = 7, height = 10)
+print(graph)
 
+dev.off()

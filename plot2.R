@@ -1,4 +1,5 @@
-library(dplyr)
+require(plyr)
+require(dplyr)
 
 ## Because these data take a while to load, we check if we haven't already loaded them
 ## before doing so.
@@ -10,15 +11,19 @@ if (!exists("SCC")) {
 	SCC <- readRDS("Source_Classification_Code.rds")
 }
 baltimore_emissions <- filter(NEI,fips==24510)
-total_yearly_emissions <- ddply(baltimore_emissions, .(year), summarize, total=sum(Emissions))
+total_yearly_emissions <- ddply(baltimore_emissions, 
+				.(year), 
+				summarize, 
+				total=sum(Emissions))
 
 png("plot2.png")
 
+# A scatter plot with a trendline should demonstrate any overall change.
 plot(total_yearly_emissions, 
-	main = "Total Yearly Emissions in Baltimore",
+	main = "Total Yearly PM2.5 Emissions in Baltimore City",
 	sub = "Source: EPA (http://www.epa.gov/ttn/chief/eiinformation.html)",
 	xlab = "Year",
-	ylab = "Total Emissions from PM2.5",
+	ylab = "Total PM2.5 Emissions (tons)",
 	col = "blue",
 	fg = "gray",
 	pch = 16,
